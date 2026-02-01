@@ -85,14 +85,14 @@ Use URLs HTTPS (GitHub, Kaggle exportado, etc.)
 
 ### 👤 Usuários
 LOAD CSV WITH HEADERS
-FROM 'https://raw.githubusercontent.com/seu-repo/twitter_users.csv' AS row
+FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
 MERGE (u:User {id: row.user_id})
 SET u.username = row.username,
     u.followers_count = toInteger(row.followers);
 
 ### 🐦 Tweets
 LOAD CSV WITH HEADERS
-FROM 'https://raw.githubusercontent.com/seu-repo/twitter_tweets.csv' AS row
+FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
 MERGE (t:Tweet {id: row.tweet_id})
 SET t.text = row.text,
     t.created_at = row.created_at,
@@ -100,32 +100,32 @@ SET t.text = row.text,
 
 ### 🧑‍💻 Usuário → Tweet
 LOAD CSV WITH HEADERS
-FROM 'https://raw.githubusercontent.com/seu-repo/twitter_tweets.csv' AS row
+FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
 MATCH (u:User {id: row.user_id})
 MATCH (t:Tweet {id: row.tweet_id})
 MERGE (u)-[:POSTED]->(t);
 
 ### 🔁 Seguidores
 LOAD CSV WITH HEADERS
-FROM 'https://raw.githubusercontent.com/seu-repo/twitter_follows.csv' AS row
+FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
 MATCH (a:User {id: row.follower_id})
 MATCH (b:User {id: row.followed_id})
 MERGE (a)-[:FOLLOWS]->(b);
 
 ### ❤️ Likes
 LOAD CSV WITH HEADERS
-FROM 'https://raw.githubusercontent.com/seu-repo/twitter_likes.csv' AS row
+FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
 MATCH (u:User {id: row.user_id})
 MATCH (t:Tweet {id: row.tweet_id})
 MERGE (u)-[:LIKED]->(t);
 
 ### 🔖 Hashtags
 LOAD CSV WITH HEADERS
-FROM 'https://raw.githubusercontent.com/seu-repo/twitter_hashtags.csv' AS row
+FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
 MERGE (h:Hashtag {tag: row.hashtag});
 
 LOAD CSV WITH HEADERS
-FROM 'https://raw.githubusercontent.com/seu-repo/twitter_hashtags.csv' AS row
+FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
 MATCH (t:Tweet {id: row.tweet_id})
 MATCH (h:Hashtag {tag: row.hashtag})
 MERGE (t)-[:HAS_HASHTAG]->(h);
