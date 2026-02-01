@@ -85,39 +85,46 @@ Use URLs HTTPS (GitHub, Kaggle exportado, etc.)
 
 ### 👤 Usuários
 LOAD CSV WITH HEADERS
-FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
-MERGE (u:User {id: row.user_id})
-SET u.username = row.username,
-    u.followers_count = toInteger(row.followers);
+FROM 'https://raw.githubusercontent.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/refs/heads/main/twitter_training.csv' AS row
+WITH row
+WHERE row.id IS NOT NULL AND row.id <> ''
+MERGE (u:User {id: 'user_' + row.id});
 
 ### 🐦 Tweets
 LOAD CSV WITH HEADERS
-FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
-MERGE (t:Tweet {id: row.tweet_id})
+FROM 'https://raw.githubusercontent.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/refs/heads/main/twitter_training.csv' AS row
+WITH row
+WHERE row.id IS NOT NULL AND row.id <> ''
+MERGE (t:Tweet {id: row.id})
 SET t.text = row.text,
-    t.created_at = row.created_at,
-    t.likes = toInteger(row.likes);
+    t.sentiment = row.sentiment;
 
 ### 🧑‍💻 Usuário → Tweet
 LOAD CSV WITH HEADERS
-FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
-MATCH (u:User {id: row.user_id})
-MATCH (t:Tweet {id: row.tweet_id})
+FROM 'https://raw.githubusercontent.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/refs/heads/main/twitter_training.csv' AS row
+WITH row
+WHERE row.id IS NOT NULL AND row.id <> ''
+MATCH (u:User {id: 'user_' + row.id})
+MATCH (t:Tweet {id: row.id})
 MERGE (u)-[:POSTED]->(t);
 
-### 🔁 Seguidores
+### 🔁 Tópicos
 LOAD CSV WITH HEADERS
-FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
-MATCH (a:User {id: row.follower_id})
-MATCH (b:User {id: row.followed_id})
-MERGE (a)-[:FOLLOWS]->(b);
+FROM 'https://raw.githubusercontent.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/refs/heads/main/twitter_training.csv' AS row
+WITH row
+WHERE row.topic IS NOT NULL AND row.topic <> ''
+MERGE (tp:Topic {name: row.topic});
 
-### ❤️ Likes
+
+### ❤️ Tweet → Tópico
 LOAD CSV WITH HEADERS
-FROM 'https://github.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/blob/main/twitter_training.csv' AS row
-MATCH (u:User {id: row.user_id})
-MATCH (t:Tweet {id: row.tweet_id})
-MERGE (u)-[:LIKED]->(t);
+FROM 'https://raw.githubusercontent.com/mari19-coder/Banco-de-Grafos-para-An-lise-do-Twitter-Neo4j-Aura-/refs/heads/main/twitter_training.csv' AS row
+WITH row
+WHERE row.id IS NOT NULL AND row.id <> '' 
+  AND row.topic IS NOT NULL AND row.topic <> ''
+MATCH (t:Tweet {id: row.id})
+MATCH (tp:Topic {name: row.topic})
+MERGE (t)-[:ABOUT]->(tp);
 
 ### 🔖 Hashtags
 LOAD CSV WITH HEADERS
